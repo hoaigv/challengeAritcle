@@ -1,4 +1,4 @@
-package com.challenge.aritcle.aricle.models;
+package com.challenge.aritcle.aricles.models;
 
 import com.challenge.aritcle.commnets.models.CommentEntity;
 import com.challenge.aritcle.users.models.FavoriteEntity;
