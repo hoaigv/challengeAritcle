@@ -1,4 +1,4 @@
-package com.challenge.aritcle.common.models.Api;
+package com.challenge.aritcle.common.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
