@@ -1,6 +1,5 @@
 package com.challenge.aritcle.aricles.controllers.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

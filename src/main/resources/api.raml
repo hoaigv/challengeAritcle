@@ -1,0 +1,580 @@
+#%RAML 1.0
+title: User API
+version: v1
+baseUri: http://localhost:8080/{version}
+mediaType: application/json
+
+securitySchemes:
+  JWT:
+    description: Use JWT token for authorization
+    type: x-{other}
+    describedBy:
+      headers:
+        Authorization:
+          description: Bearer token
+          type: string
+          required: true
+      responses:
+        401:
+          description: Unauthorized. Access token is missing or invalid.
+    settings: {}
+
+/users:
+  post:
+    description: Create a new user
+    body:
+      application/json:
+        type: object
+        properties:
+          username:
+            type: string
+            description: The username of the user
+            minLength: 6
+            pattern: "^[a-zA-Z0-9]+$"
+          password:
+            type: string
+            description: The password of the user
+            minLength: 6
+            pattern: "^[a-zA-Z0-9@#$%^&*()!]+$"
+          email:
+            type: string
+            description: The email of the user
+            pattern: "^[a-zA-Z][a-zA-Z0-9._-]*@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        required:
+          - username
+          - password
+          - email
+    responses:
+      201:
+        description: User created successfully
+      400:
+        description: Bad request, validation errors
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+
+/users/me:
+  securedBy: [ JWT ]
+  get:
+    description: Get the current user's information
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              username:
+                type: string
+                description: The username of the user
+              gmail:
+                type: string
+                description: The email of the user
+              createdAt:
+                type: string
+                format: date-time
+                description: The date and time when the user was created
+              password:
+                type: string
+                description: The password of the user (optional in response)
+              numOfFollowers:
+                type: integer
+                description: The number of followers of the user
+              numOfFollowing:
+                type: integer
+                description: The number of users that the user is following
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+    get:
+    /followers:
+      description: Retrieve a paginated list of followers for the authenticated user.
+      queryParameters:
+        page:
+          type: integer
+          description: The page number to retrieve.
+          example: 1
+        size:
+          type: integer
+          description: The number of items to return per page.
+          example: 10
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    type: UserGetResponse
+                currentPage:
+                  type: integer
+                  description: The current page number
+                totalElements:
+                  type: integer
+                  description: The total number of articles created by the user
+                totalPages:
+                  type: integer
+                  description: The total number of pages
+                size:
+                  type: integer
+                  description: The number of articles per page
+    /followings:
+      description: Retrieve a paginated list of users that the authenticated user is following.
+      queryParameters:
+        page:
+          type: integer
+          description: The page number to retrieve.
+          example: 1
+        size:
+          type: integer
+          description: The number of items to return per page.
+          example: 10
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    type: UserGetResponse
+                currentPage:
+                  type: integer
+                  description: The current page number
+                totalElements:
+                  type: integer
+                  description: The total number of articles created by the user
+                totalPages:
+                  type: integer
+                  description: The total number of pages
+                size:
+                  type: integer
+                  description: The number of articles per page
+  put:
+    description: Update user information
+    body:
+      application/json:
+        type: object
+        properties:
+          username:
+            type: string
+            description: The username of the user
+            minLength: 6
+            pattern: "^[a-zA-Z0-9]+$"
+          email:
+            type: string
+            description: The email of the user
+            pattern: "^[a-zA-Z][a-zA-Z0-9._-]*@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          password:
+            type: string
+            description: The password of the user
+            minLength: 6
+            pattern: "^[a-zA-Z0-9@#$%^&*()!]+$"
+        required:
+          - username
+          - email
+    responses:
+      200:
+        description: User updated successfully
+      400:
+        description: Bad request, validation errors
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+      404:
+        description: User not found.
+
+
+
+/me/articles/{articleId}:
+  securedBy: [ JWT ]
+  put:
+    description: Update an existing article by article ID
+    uriParameters:
+      articleId:
+        description: The ID of the article to update
+        type: integer
+        required: true
+    body:
+      application/json:
+        type: object
+        properties:
+          title:
+            type: string
+            description: The new title of the article
+            minLength: 1
+          body:
+            type: string
+            description: The new content of the article
+            minLength: 1
+          status:
+            type: boolean
+            description: The new publication status of the article
+    responses:
+      200:
+        description: Article updated successfully
+      400:
+        description: Bad request. Validation errors or missing fields.
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+      404:
+        description: Article not found.
+  get:
+    description: Get details of an article by its ID
+    uriParameters:
+      articleId:
+        description: The ID of the article to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              user_id:
+                type: integer
+                description: The ID of the user who created the article
+              title:
+                type: string
+                description: The title of the article
+              body:
+                type: string
+                description: The content of the article
+              status:
+                type: boolean
+                description: The publication status of the article
+              createdAt:
+                type: string
+                format: date-time
+                description: The timestamp when the article was created
+              updatedAt:
+                type: string
+                format: date-time
+                description: The timestamp when the article was last updated
+              numberOfFavorite:
+                type: integer
+                description: The number of favorites the article has received
+      404:
+        description: Article not found.
+  delete:
+    securedBy: [ JWT ]
+    description: Delete an article by its ID
+    responses:
+      204:
+        description: Article deleted successfully
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+      404:
+        description: Article not found.
+/me/articles:
+  securedBy: [ JWT ]
+  get:
+    description: Get a list of articles created by the authenticated user
+    queryParameters:
+      page:
+        description: The page number
+        type: integer
+        required: false
+        default: 1
+      size:
+        description: The number of articles per page
+        type: integer
+        required: false
+        default: 10
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              content:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the article
+                    title:
+                      type: string
+                      description: The title of the article
+                    body:
+                      type: string
+                      description: The content of the article
+                    status:
+                      type: boolean
+                      description: The publication status of the article
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: The date and time when the article was created
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      description: The date and time when the article was last updated
+                    numberOfFavorite:
+                      type: integer
+                      description: The number of favorites the article has
+              currentPage:
+                type: integer
+                description: The current page number
+              totalElements:
+                type: integer
+                description: The total number of articles created by the user
+              totalPages:
+                type: integer
+                description: The total number of pages
+              size:
+                type: integer
+                description: The number of articles per page
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+
+
+/articles:
+  get:
+    description: Get a list of articles with pagination
+    queryParameters:
+      page:
+        description: The page number
+        type: integer
+        required: false
+        default: 1
+      size:
+        description: The number of articles per page
+        type: integer
+        required: false
+        default: 10
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              content:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the article
+                    user_id:
+                      type: integer
+                      description: The ID of the user who created the article
+                    title:
+                      type: string
+                      description: The title of the article
+                    body:
+                      type: string
+                      description: The content of the article
+                    status:
+                      type: boolean
+                      description: The publication status of the article
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: The date and time when the article was created
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      description: The date and time when the article was last updated
+                    numberOfFavorite:
+                      type: integer
+                      description: The number of favorites the article has
+              currentPage:
+                type: integer
+                description: The current page number
+              totalElements:
+                type: integer
+                description: The total number of articles
+              totalPages:
+                type: integer
+                description: The total number of pages
+              size:
+                type: integer
+                description: The number of articles per page
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+  post:
+    securedBy: [ JWT ]
+    description: Create a new article
+    body:
+      application/json:
+        type: object
+        properties:
+          title:
+            type: string
+            description: The title of the article
+            minLength: 1
+          body:
+            type: string
+            description: The content of the article
+            minLength: 1
+          status:
+            type: boolean
+            description: The publication status of the article
+            required: true
+    responses:
+      201:
+        description: Article created successfully
+      400:
+        description: Bad request. Validation errors or missing fields.
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+
+
+
+/articles/{articleId}/comment:
+  post:
+    securedBy: [ JWT ]
+    description: Create a new comment
+    uriParameters:
+      articleId:
+        description: The ID of the article
+        type: integer
+        required: true
+    body:
+      application/json:
+        type: object
+        properties:
+          content:
+            type: string
+            description: The content of the comment
+            minLength: 1
+    responses:
+      201:
+        description: Comment created successfully
+      400:
+        description: Bad request. Validation errors or missing fields.
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+
+  get:
+    description: Get comments for a specific article
+    uriParameters:
+      articleId:
+        description: The ID of the article
+        type: integer
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                username:
+                  type: string
+                article_id:
+                  type: integer
+                content:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                status:
+                  type: boolean
+      404:
+        description: Article not found or no comments available.
+
+/articles/{articleId}/comment/{commentId}:
+  securedBy: [ JWT ]
+  delete:
+    description: Delete a specific comment for an article by comment ID
+    uriParameters:
+      articleId:
+        description: The ID of the article
+        type: integer
+        required: true
+      commentId:
+        description: The ID of the comment to delete
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Comment deleted successfully
+      401:
+        description: Unauthorized. Access token is missing or invalid.
+      404:
+        description: Comment not found or article not found.
+
+/auth:
+  post:
+    /login:
+      description: Authenticate a user and return access and refresh tokens.
+      body:
+        application/json:
+          type: object
+          properties:
+            username:
+              type: string
+              description: The username of the user.
+              example: user123
+            password:
+              type: string
+              description: The password of the user.
+              example: password123
+      responses:
+        200:
+          body:
+            application/json:
+              type: AuthenticationResponse
+              example: |
+                {
+                  "accessToken": "access-token-example",
+                  "refreshToken": "refresh-token-example",
+                  "authenticated": true
+                }
+        400:
+          description: Bad Request, e.g., username or password is missing.
+
+    /logout:
+      description: Invalidate the access token to log out the user.
+      body:
+        application/json:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: The access token to be invalidated.
+              example: access-token-example
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Successfully logged out"
+        400:
+          description: Bad Request, e.g., access token is missing.
+
+    /refresh:
+      description: Refresh the access token using the refresh token.
+      body:
+        application/json:
+          type: object
+          properties:
+            refreshToken:
+              type: string
+              description: The refresh token used to get a new access token.
+              example: refresh-token-example
+      responses:
+        200:
+          body:
+            application/json:
+              type: AuthenticationResponse
+              example: |
+                {
+                  "accessToken": "new-access-token-example",
+                  "refreshToken": "refresh-token-example",
+                  "authenticated": true
+                }
+        400:
+          description: Bad Request, e.g., refresh token is missing or invalid.
+

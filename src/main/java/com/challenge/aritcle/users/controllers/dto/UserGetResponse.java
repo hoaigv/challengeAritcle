@@ -1,6 +1,5 @@
 package com.challenge.aritcle.users.controllers.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,13 +10,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserGetRequest {
+public class UserGetResponse {
 
     String username;
 
+    String password;
 
     String gmail;
 
-
     LocalDateTime createdAt;
+
+    Integer numOfFollowers;
+
+    Integer numOfFollowing;
 }
