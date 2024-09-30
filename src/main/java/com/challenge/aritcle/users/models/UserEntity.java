@@ -2,7 +2,7 @@ package com.challenge.aritcle.users.models;
 
 import com.challenge.aritcle.aricle.models.ArticleEntity;
 import com.challenge.aritcle.commnets.models.CommentEntity;
-import com.challenge.aritcle.utils.BaseEntity;
+import com.challenge.aritcle.common.models.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,7 +33,7 @@ public class UserEntity extends BaseEntity {
     @NotNull(message = "email must not be null")
     String email;
 
-    @OneToMany(mappedBy = "follower" )
+    @OneToMany(mappedBy = "follower")
     @JsonManagedReference
     Set<FollowEntity> followers=  new HashSet<>();
 

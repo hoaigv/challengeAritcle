@@ -3,7 +3,7 @@ package com.challenge.aritcle.aricle.models;
 import com.challenge.aritcle.commnets.models.CommentEntity;
 import com.challenge.aritcle.users.models.FavoriteEntity;
 import com.challenge.aritcle.users.models.UserEntity;
-import com.challenge.aritcle.utils.BaseEntity;
+import com.challenge.aritcle.common.models.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.challenge.aritcle.utils;
+package com.challenge.aritcle.common.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
