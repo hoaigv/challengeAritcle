@@ -1,0 +1,1475 @@
+openapi: 3.0.0
+info:
+  title: Authentication API
+  version: v1
+servers:
+  - url: http://localhost:8080/v1
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate a user and return access and refresh tokens.
+      tags: [Authtication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user.
+                  example: user123
+                password:
+                  type: string
+                  description: The password of the user.
+                  example: password123
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: access-token-example
+                  refreshToken:
+                    type: string
+                    example: refresh-token-example
+        '400':
+          description: Bad Request, e.g., username or password is missing.
+
+  /auth/logout:
+    post:
+      summary: Invalidate the access token to log out the user.
+      tags: [Authtication]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully logged out"
+        '400':
+          description: Bad Request, e.g., access token is missing.
+
+  /auth/refresh:
+    post:
+      summary: Refresh the access token using the refresh token.
+      tags: [Authtication]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: The refresh token used to get a new access token.
+                  example: refresh-token-example
+      responses:
+        '200':
+          description: Successfully refreshed access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: new-access-token-example
+                  refreshToken:
+                    type: string
+                    example: refresh-token-example
+        '400':
+          description: Bad Request, e.g., refresh token is missing or invalid.
+  /auth/register:
+    post:
+      summary: Sign up a new user
+      tags: [Authtication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "user123"
+                  description: "Username must be at least 6 characters long and contain only letters and numbers."
+                password:
+                  type: string
+                  example: "Password@123"
+                  description: "Password must be at least 6 characters long and can include letters, numbers, and special characters."
+                email:
+                  type: string
+                  example: "user@example.com"
+                  description: "Valid email format (e.g., example@domain.com)."
+              required:
+                - username
+                - password
+                - email
+      responses:
+        '200':
+          description: Successful user registration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User registered successfully."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation errors occurred."
+  /users/me:
+    get:
+      summary: Get the current user's profile
+      tags: [User]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successful retrieval of user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: "user123"
+                    description: "The username of the current user."
+                  password:
+                    type: string
+                    example: "Password@123"
+                    description: "The password of the current user (may be omitted for security reasons)."
+                  gmail:
+                    type: string
+                    example: "user@example.com"
+                    description: "The email address of the current user."
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-01T12:00:00Z"
+                    description: "The date and time when the user account was created."
+                  numOfFollowers:
+                    type: integer
+                    example: 10
+                    description: "The number of followers the current user has."
+                  numOfFollowing:
+                    type: integer
+                    example: 5
+                    description: "The number of users the current user is following."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please log in."
+    put:
+      summary: Update the current user's profile
+      tags: [User]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "newUser123"
+                  description: "Username must be at least 6 characters long and contain only letters and numbers."
+                password:
+                  type: string
+                  example: "NewPassword@123"
+                  description: "Password must be at least 6 characters long and can include letters, numbers, and special characters."
+              required:
+                - username
+                - password
+              example:
+                username: "newUser123"
+                password: "NewPassword@123"
+      responses:
+        '200':
+          description: Successful update of user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User profile updated successfully."
+              example:
+                message: "User profile updated successfully."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation errors occurred."
+              example:
+                message: "Validation errors occurred."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please log in."
+              example:
+                message: "Unauthorized access. Please log in."
+  /users/articles/{articleId}:
+    put:
+      summary: Update a specific article by ID
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: The unique identifier of the article to update
+          schema:
+            type: string
+            example: "abc243"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Updated Article Title"
+                  description: "The updated title of the article."
+                body:
+                  type: string
+                  example: "This is the updated body of the article."
+                  description: "The updated content of the article."
+              required:
+                - title
+                - body
+      responses:
+        '200':
+          description: Successful update message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article updated successfully."
+              example:
+                message: "Article updated successfully."
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+    delete:
+      summary: Delete a specific article by ID
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: The unique identifier of the article to delete
+          schema:
+            type: string
+            example: "abc1232"
+      responses:
+        '200':
+          description: Successful deletion message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article deleted successfully."
+              example:
+                message: "Article deleted successfully."
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+  /users/articles:
+    get:
+      summary: Retrieve a list of  user articles
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: The page number to retrieve (default is 0)
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          description: The number of articles to return per page (default is 10)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: A list of articles with pagination information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "abc1232"
+                          description: "The unique identifier of the article."
+                        username:
+                          type: string
+                          example: "user1"
+                          description: "The identifier of the user who created the article."
+                        title:
+                          type: string
+                          example: "My First Article"
+                          description: "The title of the article."
+                        body:
+                          type: string
+                          example: "This is the body of my first article. It contains interesting content."
+                          description: "The content of the article."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:00:00Z"
+                          description: "The date and time when the article was created."
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-02T12:00:00Z"
+                          description: "The date and time when the article was last updated."
+                        numberOfFavorite:
+                          type: integer
+                          example: 15
+                          description: "The number of times the article has been favorited."
+                  currentPage:
+                    type: integer
+                    example: 1
+                    description: "The current page number."
+                  totalPages:
+                    type: integer
+                    example: 5
+                    description: "The total number of pages."
+                  totalElements:
+                    type: integer
+                    example: 50
+                    description: "The total number of articles found."
+                  size:
+                    type: integer
+                    example: 10
+                    description: "The number of articles returned per page."
+              example:
+                articles:
+                  - id: "abc24"
+                    username : "user123"
+                    title: "My First Article"
+                    body: "This is the body of my first article. It contains interesting content."
+                    createdAt: "2024-10-01T12:00:00Z"
+                    updatedAt: "2024-10-02T12:00:00Z"
+                    numberOfFavorite: 15
+                  - id: "abc234"
+                    username : "user123"
+                    title: "Another Interesting Article"
+                    body: "This article covers some fascinating topics."
+                    createdAt: "2024-10-01T13:00:00Z"
+                    updatedAt: "2024-10-02T13:00:00Z"
+                    numberOfFavorite: 10
+                currentPage: 1
+                totalPages: 5
+                totalElements: 50
+                size: 10
+  /users/articles/{articleId}/comments/{commentId}:
+    delete:
+      summary: Delete a specific comment for an article
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: The unique identifier of the article
+          schema:
+            type: string
+            example: "acb232"
+        - name: commentId
+          in: path
+          required: true
+          description: The unique identifier of the comment to be deleted
+          schema:
+            type: string
+            example: "acb232"
+      responses:
+        '200':
+          description: Successful comment deletion message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comment deleted successfully."
+              example:
+                message: "Comment deleted successfully."
+        '404':
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comment not found."
+              example:
+                message: "Comment not found."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+  /users/comments:
+    get:
+      summary: Retrieve a list of comments for a user
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: The page number to retrieve (default is 0)
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          description: The number of articles to return per page (default is 10)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: A list of comments for the specified article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: "string"
+                          example: "abc1234"
+                        username:
+                          type: string
+                          example: "user1"
+                          description: "The identifier of the user who created the article."
+                        article_id:
+                          type: string
+                          example: "abc123"
+                        content:
+                          type: string
+                          example: "This is a comment for the article."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:34:56"
+                        status:
+                          type: boolean
+                          example: true
+                  currentPage:
+                    type: integer
+                    example: 1
+                    description: "The current page number."
+                  totalPages:
+                    type: integer
+                    example: 5
+                    description: "The total number of pages."
+                  totalElements:
+                    type: integer
+                    example: 50
+                    description: "The total number of articles found."
+                  size:
+                    type: integer
+                    example: 10
+                    description: "The number of articles returned per page."
+              example:
+                comments:
+                  - id: "abvl23"
+                    article_id: "abcdef"
+                    username : "user123"
+                    content: "This is a comment for the article."
+                    createdAt: "2024-10-01T12:34:56"
+                  - id: "asfbdals2"
+                    article_id: "abcdef"
+                    username : "user123"
+                    content: "Another insightful comment."
+                    createdAt: "2024-10-01T13:00:00"
+                currentPage: 1
+                totalPages: 5
+                totalElements: 50
+                size: 10
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+  /users/followers:
+    get:
+      summary: Retrieve a list of followers for the current user
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: The page number to retrieve (default is 0)
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          description: The number of articles to return per page (default is 10)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: A list of followers and the total number of followers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  followers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                          example: "john_doe"
+                        password:
+                          type: string
+                          example: "encryptedPassword"
+                        gmail:
+                          type: string
+                          example: "johndoe@gmail.com"
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:34:56"
+                        numOfFollowers:
+                          type: integer
+                          example: 100
+                        numOfFollowing:
+                          type: integer
+                          example: 50
+                  totalFollowers:
+                    type: integer
+                    example: 100
+                  currentPage:
+                    type: integer
+                    example: 1
+                    description: "The current page number."
+                  totalPages:
+                    type: integer
+                    example: 5
+                    description: "The total number of pages."
+                  totalElements:
+                    type: integer
+                    example: 50
+                    description: "The total number of articles found."
+                  size:
+                    type: integer
+                    example: 10
+                    description: "The number of articles returned per page."
+              example:
+                followers:
+                  - username: "john_doe"
+                    password: "encryptedPassword"
+                    gmail: "johndoe@gmail.com"
+                    createdAt: "2024-10-01T12:34:56"
+                    numOfFollowers: 100
+                    numOfFollowing: 50
+                totalFollowers: 100
+                currentPage: 1
+                totalPages: 5
+                totalElements: 50
+                size: 10
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+    post:
+      summary: Follow another user by providing their username
+      tags: [User]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user you want to follow
+                  example: "john_doe"
+            example:
+              username: "john_doe"
+      responses:
+        '200':
+          description: Successfully followed the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully followed john_doe."
+              example:
+                message: "Successfully followed john_doe."
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found."
+              example:
+                message: "User not found."
+        '400':
+          description: Already following this user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "You are already following this user."
+              example:
+                message: "You are already following this user."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+  /users/following:
+    get:
+      summary: Retrieve a list of users that the current user is following
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: The page number to retrieve (default is 0)
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          description: The number of articles to return per page (default is 10)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: A list of following users and the total number of users the current user is following
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  following:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                          example: "jane_doe"
+                        password:
+                          type: string
+                          example: "encryptedPassword"
+                        gmail:
+                          type: string
+                          example: "janedoe@gmail.com"
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:00:00"
+                        numOfFollowers:
+                          type: integer
+                          example: 75
+                        numOfFollowing:
+                          type: integer
+                          example: 30
+                  totalFollowing:
+                    type: integer
+                    example: 30
+                  currentPage:
+                    type: integer
+                    example: 1
+                    description: "The current page number."
+                  totalPages:
+                    type: integer
+                    example: 5
+                    description: "The total number of pages."
+                  totalElements:
+                    type: integer
+                    example: 50
+                    description: "The total number of articles found."
+                  size:
+                    type: integer
+                    example: 10
+                    description: "The number of articles returned per page."
+              example:
+                following:
+                  - username: "jane_doe"
+                    password: "encryptedPassword"
+                    gmail: "janedoe@gmail.com"
+                    createdAt: "2024-10-01T12:00:00"
+                    numOfFollowers: 75
+                    numOfFollowing: 30
+                totalFollowing: 30
+                currentPage: 1
+                totalPages: 5
+                totalElements: 50
+                size: 10
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+  /users/favorites/articles/{articleId}:
+    post:
+      summary: Add an article to the user's  favorites
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the article to be favorited
+      responses:
+        '200':
+          description: Successfully added the article to favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully added article "
+              example:
+                message: "Successfully added article"
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+        '400':
+          description: Article is already in favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "This article is already in your favorites list."
+              example:
+                message: "This article is already in your favorites list."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+  /users/favorites/articles:
+    get:
+      summary: Retrieve a list of user's favorite articles
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: The page number to retrieve (default is 0)
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          description: The number of articles to return per page (default is 10)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: A list of user's favorite articles with pagination information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "abc1232"
+                          description: "The unique identifier of the article."
+                        username:
+                          type: string
+                          example: "user1"
+                          description: "The identifier of the user who created the article."
+                        title:
+                          type: string
+                          example: "My Favorite Article"
+                          description: "The title of the article."
+                        body:
+                          type: string
+                          example: "This is the body of my favorite article. It contains interesting content."
+                          description: "The content of the article."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:00:00Z"
+                          description: "The date and time when the article was created."
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-02T12:00:00Z"
+                          description: "The date and time when the article was last updated."
+                        numberOfFavorite:
+                          type: integer
+                          example: 20
+                          description: "The number of times the article has been favorited."
+                  currentPage:
+                    type: integer
+                    example: 1
+                    description: "The current page number."
+                  totalPages:
+                    type: integer
+                    example: 5
+                    description: "The total number of pages."
+                  totalElements:
+                    type: integer
+                    example: 50
+                    description: "The total number of articles found."
+                  size:
+                    type: integer
+                    example: 10
+                    description: "The number of articles returned per page."
+              example:
+                articles:
+                  - id: "abc24"
+                    username: "user123"
+                    title: "My Favorite Article"
+                    body: "This is the body of my favorite article. It contains interesting content."
+                    createdAt: "2024-10-01T12:00:00Z"
+                    updatedAt: "2024-10-02T12:00:00Z"
+                    numberOfFavorite: 20
+                  - id: "abc234"
+                    username: "user456"
+                    title: "Another Favorite Article"
+                    body: "This article covers some fascinating topics."
+                    createdAt: "2024-10-01T13:00:00Z"
+                    updatedAt: "2024-10-02T13:00:00Z"
+                    numberOfFavorite: 25
+                currentPage: 1
+                totalPages: 5
+                totalElements: 50
+                size: 10
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+
+  /articles:
+    post:
+      summary: Create a new article
+      tags: [Article]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "My First Article"
+                  description: "The title of the article."
+                body:
+                  type: string
+                  example: "This is the body of my first article. It contains interesting content."
+                  description: "The content of the article."
+              required:
+                - title
+                - body
+              example:
+                title: "My First Article"
+                body: "This is the body of my first article. It contains interesting content."
+      responses:
+        '201':
+          description: Article created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article created successfully."
+                  articleId:
+                    type: string
+                    example: "abc123"
+              example:
+                message: "Article created successfully."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation errors occurred."
+              example:
+                message: "Validation errors occurred."
+
+    get:
+      summary: Retrieve a list of articles
+      tags: [Article]
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: The page number to retrieve (default is 0)
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          required: false
+          description: The number of articles to return per page (default is 10)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: A list of articles with pagination information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "abc234"
+                          description: "The unique identifier of the article."
+                        username:
+                          type: string
+                          example: "user123"
+                        title:
+                          type: string
+                          example: "My First Article"
+                          description: "The title of the article."
+                        body:
+                          type: string
+                          example: "This is the body of my first article. It contains interesting content."
+                          description: "The content of the article."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:00:00Z"
+                          description: "The date and time when the article was created."
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-02T12:00:00Z"
+                          description: "The date and time when the article was last updated."
+                        numberOfFavorite:
+                          type: integer
+                          example: 15
+                          description: "The number of times the article has been favorited."
+                  currentPage:
+                    type: integer
+                    example: 1
+                    description: "The current page number."
+                  totalPages:
+                    type: integer
+                    example: 5
+                    description: "The total number of pages."
+                  totalElements:
+                    type: integer
+                    example: 50
+                    description: "The total number of articles found."
+                  size:
+                    type: integer
+                    example: 10
+                    description: "The number of articles returned per page."
+              example:
+                articles:
+                  - id: "abc24"
+                    username : "users1"
+                    title: "My First Article"
+                    body: "This is the body of my first article. It contains interesting content."
+                    createdAt: "2024-10-01T12:00:00Z"
+                    updatedAt: "2024-10-02T12:00:00Z"
+                    numberOfFavorite: 15
+                  - id: "abc1234"
+                    username : "users2"
+                    title: "Another Interesting Article"
+                    body: "This article covers some fascinating topics."
+                    createdAt: "2024-10-01T13:00:00Z"
+                    updatedAt: "2024-10-02T13:00:00Z"
+                    numberOfFavorite: 10
+                currentPage: 1
+                totalPages: 5
+                totalElements: 50
+                size: 10
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+  /articles/{articleId}:
+    get:
+      summary: Retrieve a specific article by ID
+      tags: [Article]
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: The unique identifier of the article to retrieve
+          schema:
+            type: string
+            example: "abc3242"
+      responses:
+        '200':
+          description: A single article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  article:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "abc3242"
+                        description: "The unique identifier of the article."
+                      username:
+                        type: string
+                        example: "user123"
+                      title:
+                        type: string
+                        example: "My First Article"
+                        description: "The title of the article."
+                      body:
+                        type: string
+                        example: "This is the body of my first article. It contains interesting content."
+                        description: "The content of the article."
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-01T12:00:00Z"
+                        description: "The date and time when the article was created."
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-02T12:00:00Z"
+                        description: "The date and time when the article was last updated."
+                      numberOfFavorite:
+                        type: integer
+                        example: 15
+                        description: "The number of times the article has been favorited."
+                example:
+                  article:
+                    id: "abc32"
+                    username: "user123"
+                    title: "My First Article"
+                    body: "This is the body of my first article. It contains interesting content."
+                    createdAt: "2024-10-01T12:00:00Z"
+                    updatedAt: "2024-10-02T12:00:00Z"
+                    numberOfFavorite: 15
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+  /articles/{articleId}/comments:
+    post:
+      summary: Create a new comment for a specific article
+      tags: [Comment]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: The unique identifier of the article to add a comment
+          schema:
+            type: string
+            example: "abcw123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "This is a comment for the article."
+                  description: "The content of the comment."
+              required:
+                - content
+      responses:
+        '201':
+          description: Successful comment creation message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comment created successfully."
+              example:
+                message: "Comment created successfully."
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Content must not be empty."
+              example:
+                message: "Content must not be empty."
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."
+    get:
+      summary: Retrieve a list of comments for a specific article
+      tags: [Comment]
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: The unique identifier of the article to retrieve comments for
+          schema:
+            type: string
+            example: "abc3424"
+      responses:
+        '200':
+          description: A list of comments for the specified article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "abc3424"
+                        username:
+                          type: string
+                          example: "user123"
+                        article_id:
+                          type: string
+                          example: "user123"
+                        content:
+                          type: string
+                          example: "This is a comment for the article."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-10-01T12:34:56"
+              example:
+                comments:
+                  - id: "abc234"
+                    username: "user123"
+                    article_id: "1b214"
+                    content: "This is a comment for the article."
+                    createdAt: "2024-10-01T12:34:56"
+                  - id: "423b4asd"
+                    username: "user456"
+                    article_id: "vbesaf1231"
+                    content: "Another insightful comment."
+                    createdAt: "2024-10-01T13:00:00"
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article not found."
+              example:
+                message: "Article not found."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized access. Please provide a valid JWT token."
+              example:
+                message: "Unauthorized access. Please provide a valid JWT token."  

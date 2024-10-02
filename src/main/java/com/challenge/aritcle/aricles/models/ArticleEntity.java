@@ -34,9 +34,6 @@ public class ArticleEntity extends BaseEntity {
     @Column(columnDefinition = "MEDIUMTEXT")
     String body;
 
-    @NotNull(message = "status must be not null")
-    Boolean status;
-
     @Column
     @LastModifiedDate
     LocalDateTime updatedAt;

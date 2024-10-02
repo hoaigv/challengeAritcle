@@ -14,5 +14,4 @@ public class ArticleUpdateRequest {
     String title;
     @NotEmpty
     String body;
-    Boolean status;
 }

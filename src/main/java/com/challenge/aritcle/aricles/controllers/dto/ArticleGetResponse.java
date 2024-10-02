@@ -12,15 +12,13 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ArticleGetResponse {
 
-    Integer id;
+    String id;
 
-    Integer user_id;
+    String user_id;
 
     String title;
 
     String body;
-
-    Boolean status;
 
     LocalDateTime createdAt;
 

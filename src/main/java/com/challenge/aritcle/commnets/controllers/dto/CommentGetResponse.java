@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentGetResponse {
-    Integer id;
+    String id;
 
     String username;
 
-    Integer article_id;
+    String article_id;
 
     String content ;
 

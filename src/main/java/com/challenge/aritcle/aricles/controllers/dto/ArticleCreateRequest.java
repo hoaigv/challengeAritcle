@@ -1,7 +1,6 @@
 package com.challenge.aritcle.aricles.controllers.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +14,4 @@ public class ArticleCreateRequest {
     String title;
     @NotBlank
     String body;
-    @NotNull
-    Boolean status;
 }

@@ -19,7 +19,4 @@ public class UserUpdateRequest {
     @Size(min = 6, message = "Password length must be at least 6 characters")
     @Pattern(regexp = "^[a-zA-Z0-9@#$%^&*()!]+$", message = "Password must not contain spaces or accented characters")
     String password;
-
-    @Pattern(regexp="^[a-zA-Z][a-zA-Z0-9._-]*@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email format. Please enter a valid email (e.g., example@domain.com)")
-    String email;
 }

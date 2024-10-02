@@ -24,9 +24,6 @@ public class CommentEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     String content;
 
-    @NotNull(message = "status must be not null")
-    Boolean status;
-
     @ManyToOne
     @JoinColumn
     @NotNull

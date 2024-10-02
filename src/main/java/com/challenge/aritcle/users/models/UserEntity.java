@@ -8,7 +8,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +34,12 @@ public class UserEntity extends BaseEntity {
     @Column(unique = true)
     @NotNull(message = "email must not be null")
     String email;
+
+    String refreshToken;
+
+    @Column
+    @LastModifiedDate
+    LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "follower")
     @JsonManagedReference
