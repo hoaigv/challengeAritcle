@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RefreshRequest {
-    @NotBlank
+    @NotBlank(message = "refreshToken not null")
     String refreshToken;
 }

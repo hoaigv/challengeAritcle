@@ -19,7 +19,11 @@ spring:
     resources:
       add-mappings: false
 
-
+jwt:
+  signerKeyRefresh: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  signerKeyAccess:  "4GTzbXf7UmaZduTlbkG/gm4zSP9N9T8KR9X7iUf8TXTHuTG4ByLb7skybWCngRGx"
+  valid-duration: 86400 #in second
+  refreshable-duration: 360000 #in second
 
 
 
