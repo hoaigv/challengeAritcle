@@ -1,4 +1,4 @@
-package com.challenge.aritcle.aricle.models;
+package com.challenge.aritcle.aricles.models;
 
 import com.challenge.aritcle.commnets.models.CommentEntity;
 import com.challenge.aritcle.users.models.FavoriteEntity;
@@ -33,9 +33,6 @@ public class ArticleEntity extends BaseEntity {
     @NotBlank(message = "body must be not null")
     @Column(columnDefinition = "MEDIUMTEXT")
     String body;
-
-    @NotNull(message = "status must be not null")
-    Boolean status;
 
     @Column
     @LastModifiedDate

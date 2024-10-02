@@ -1,6 +1,6 @@
 package com.challenge.aritcle.users.models;
 
-import com.challenge.aritcle.aricle.models.ArticleEntity;
+import com.challenge.aritcle.aricles.models.ArticleEntity;
 import com.challenge.aritcle.common.models.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

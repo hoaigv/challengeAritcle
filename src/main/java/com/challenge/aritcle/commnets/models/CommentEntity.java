@@ -1,6 +1,6 @@
 package com.challenge.aritcle.commnets.models;
 
-import com.challenge.aritcle.aricle.models.ArticleEntity;
+import com.challenge.aritcle.aricles.models.ArticleEntity;
 import com.challenge.aritcle.users.models.UserEntity;
 import com.challenge.aritcle.common.models.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -23,9 +23,6 @@ public class CommentEntity extends BaseEntity {
     @NotBlank(message = "comment must be not null")
     @Column(columnDefinition = "TEXT")
     String content;
-
-    @NotNull(message = "status must be not null")
-    Boolean status;
 
     @ManyToOne
     @JoinColumn
