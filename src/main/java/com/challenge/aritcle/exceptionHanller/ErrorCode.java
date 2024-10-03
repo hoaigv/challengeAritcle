@@ -12,6 +12,9 @@ public enum ErrorCode {
     TOKEN_CREATION_FAILED(400, "Token creation failed: bad request", HttpStatus.BAD_REQUEST),
     USER_EXISTED(400, "user already existed", HttpStatus.BAD_REQUEST),
     REFRESH_TOKEN_FAILED(400, "refresh token failed: bad request", HttpStatus.BAD_REQUEST),
+    URL_NOT_EXIST(404,"The requested URL does not exist." , HttpStatus.NOT_FOUND),
+    FOLLOWER_EXISTED(400, "You are already following this user.",HttpStatus.BAD_REQUEST),
+    FOLLOWER_NOT_EXIST(400, "You have never followed this user.",HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;
