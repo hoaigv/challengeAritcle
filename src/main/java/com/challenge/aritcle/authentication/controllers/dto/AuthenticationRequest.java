@@ -1,8 +1,7 @@
 package com.challenge.aritcle.authentication.controllers.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
@@ -11,8 +10,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationRequest {
-    @NotBlank
+    @NotBlank(message = "username must be not null")
     String username;
-    @NotBlank
+    @NotBlank(message = "password must be not null")
     String password;
+
 }
