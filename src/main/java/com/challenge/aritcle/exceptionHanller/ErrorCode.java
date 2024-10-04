@@ -15,6 +15,8 @@ public enum ErrorCode {
     URL_NOT_EXIST(404,"The requested URL does not exist." , HttpStatus.NOT_FOUND),
     FOLLOWER_EXISTED(400, "You are already following this user.",HttpStatus.BAD_REQUEST),
     FOLLOWER_NOT_EXIST(400, "You have never followed this user.",HttpStatus.BAD_REQUEST),
+    SELF_FOLLOW_NOT_ALLOWED(400, "You cannot follow yourself.", HttpStatus.BAD_REQUEST)
+
     ;
 
     private final int code;

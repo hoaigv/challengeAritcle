@@ -38,6 +38,8 @@ public class FollowService implements IFollowService {
                 .orElseThrow(() -> new CustomRunTimeException(ErrorCode.USER_NOT_FOUND));
         if(followRepository.existsByFollowerAndFollowing(user,userFollow)) {
             throw new CustomRunTimeException(ErrorCode.FOLLOWER_EXISTED);
+        }else if (user.equals(userFollow)) {
+            throw  new CustomRunTimeException(ErrorCode.SELF_FOLLOW_NOT_ALLOWED);
         }
         FollowEntity followEntity = FollowEntity.builder()
                 .follower(user)
@@ -53,7 +55,7 @@ public class FollowService implements IFollowService {
     @Override
     public ApiResponse<List<UserGetResponse>> getAllFollowers(Pageable pageable) {
         var user = getUserEntity();
-        var followers = followRepository.findByFollower(user, pageable);
+        var followers = followRepository.findByFollowing(user,pageable);
         var listFollowers = followers.get().map(
                 followEntity -> {
                     var follower = followEntity.getFollower();
@@ -76,7 +78,7 @@ public class FollowService implements IFollowService {
     @Override
     public ApiResponse<List<UserGetResponse>> getAllFollowings(Pageable pageable) {
         var user = getUserEntity();
-        var followings = followRepository.findByFollowing(user, pageable);
+        var followings = followRepository.findByFollower(user, pageable);
         var listFollowings = followings.get().map(
                 followEntity -> {
                     var following = followEntity.getFollowing();

@@ -46,8 +46,8 @@ public class UserService implements IUserService {
     public ApiResponse<UserGetResponse> getMyInformation() {
         var user = getUserEntity();
         var userDTO = userMapper.userEntityToUserGetResponse(user);
-        userDTO.setNumOfFollowers(user.getFollowers().size());
-        userDTO.setNumOfFollowing(user.getFollowings().size());
+        userDTO.setNumOfFollowers(user.getFollowings().size());
+        userDTO.setNumOfFollowing(user.getFollowers().size());
         return ApiResponse.<UserGetResponse>builder()
                 .code(HttpStatus.OK.value())
                 .result(userDTO)
