@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     UNAUTHENTICATED(401, "Unauthorized access. Please log in.",HttpStatus.UNAUTHORIZED),
     USER_NOT_FOUND(404, "user not found !", HttpStatus.NOT_FOUND),
+    ARTICLE_NOT_FOUND(404, "article not found !", HttpStatus.NOT_FOUND),
     PASSWORD_INCORRECT(401, "Password incorrect, please enter another password", HttpStatus.UNAUTHORIZED),
     TOKEN_CREATION_FAILED(400, "Token creation failed: bad request", HttpStatus.BAD_REQUEST),
     USER_EXISTED(400, "user already existed", HttpStatus.BAD_REQUEST),
@@ -15,7 +16,9 @@ public enum ErrorCode {
     URL_NOT_EXIST(404,"The requested URL does not exist." , HttpStatus.NOT_FOUND),
     FOLLOWER_EXISTED(400, "You are already following this user.",HttpStatus.BAD_REQUEST),
     FOLLOWER_NOT_EXIST(400, "You have never followed this user.",HttpStatus.BAD_REQUEST),
-    SELF_FOLLOW_NOT_ALLOWED(400, "You cannot follow yourself.", HttpStatus.BAD_REQUEST)
+    SELF_FOLLOW_NOT_ALLOWED(400, "You cannot follow yourself.", HttpStatus.BAD_REQUEST),
+    FAVORITE_ARTICLE_EXISTED(400, "You are already favorite this Article.",HttpStatus.BAD_REQUEST),
+    FAVORITE_ARTICLE_NOT_EXIST(400, "You have never favorite this Article.",HttpStatus.BAD_REQUEST),
 
     ;
 

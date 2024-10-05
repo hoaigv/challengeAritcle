@@ -1,11 +1,13 @@
 package com.challenge.aritcle.users.controllers;
 
+import com.challenge.aritcle.aricles.controllers.dto.ArticleGetResponse;
 import com.challenge.aritcle.common.api.ApiResponse;
 import com.challenge.aritcle.users.controllers.dto.UserFollowerRequest;
 import com.challenge.aritcle.users.controllers.dto.UserGetResponse;
 import com.challenge.aritcle.users.controllers.dto.UserUpdateRequest;
-import com.challenge.aritcle.users.services.impl.FollowService;
-import com.challenge.aritcle.users.services.impl.UserService;
+import com.challenge.aritcle.users.services.IFavoriteService;
+import com.challenge.aritcle.users.services.IFollowService;
+import com.challenge.aritcle.users.services.IUserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +31,9 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserControllers {
-    UserService userService;
-    FollowService followService;
+    IUserService userService;
+    IFollowService followService;
+    IFavoriteService favoriteService;
     private final static String DEFAULT_FILTER_SIZE = "10";
     private final static String DEFAULT_FILTER_PAGE = "0";
     private final static Sort DEFAULT_FILTER_SORT = Sort.by(Sort.Direction.DESC, "createdAt");
@@ -91,6 +94,34 @@ public class UserControllers {
         Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), DEFAULT_FILTER_SORT);
         var resp = followService.getAllFollowings(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(resp);
+    }
+
+    @PostMapping("/favorite/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> favoriteArticle(@PathVariable String articleId) {
+        var resp = favoriteService.favoriteArticle(articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(resp);
+    }
+    @DeleteMapping("/favorite/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> unfavoriteArticle(@PathVariable String articleId) {
+        var resp = favoriteService.unFavoriteArticle(articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(resp);
+    }
+    @GetMapping("/favorite")
+    public ResponseEntity<ApiResponse<List<ArticleGetResponse>>> getFavorites(
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_PAGE) String page,
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_SIZE) String size
+    ){
+        if (!isNumeric(page) || !isNumeric(size)) {
+            var resp = ApiResponse.<List<ArticleGetResponse>>builder()
+                    .result(null)
+                    .message("Page and size must be numeric")
+                    .code(400)
+                    .build();
+            return ResponseEntity.badRequest().body(resp);
+        }
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size),DEFAULT_FILTER_SORT);
+        var resp = favoriteService.getFavoriteArticles(pageable);
+        return ResponseEntity.status(HttpStatus.OK.value()).body(resp);
     }
 
 }

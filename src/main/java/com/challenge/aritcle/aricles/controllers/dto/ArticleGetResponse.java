@@ -14,7 +14,7 @@ public class ArticleGetResponse {
 
     String id;
 
-    String user_id;
+    String username;
 
     String title;
 
