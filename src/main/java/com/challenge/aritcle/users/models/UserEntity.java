@@ -61,4 +61,7 @@ public class UserEntity extends BaseEntity {
     @JsonManagedReference
     Set<ArticleEntity> articles =  new HashSet<>();
 
+
+
+
 }

@@ -1,6 +1,7 @@
 package com.challenge.aritcle.aricles.controllers.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +11,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ArticleCreateRequest {
-    @NotBlank
+    @NotBlank(message = " title must be not null or only space !")
+    @Pattern(regexp = "^(?!\\s)(.*\\S)?$", message = "Title must not contain leading or trailing whitespace and must not be blank if provided")
     String title;
-    @NotBlank
+    @NotBlank(message = " body must be not null or only space !")
     String body;
 }
