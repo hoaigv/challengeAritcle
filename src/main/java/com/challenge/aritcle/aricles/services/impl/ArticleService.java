@@ -33,6 +33,7 @@ public class ArticleService implements IArticleService {
     IArticleMapper articleMapper;
 
     @Override
+    @Transactional
     public ApiResponse<Void> createArticle(ArticleCreateRequest request) {
         var user = getUserEntity();
         var article = articleMapper.articleDtoToEntity(request);
@@ -111,7 +112,7 @@ public class ArticleService implements IArticleService {
     @Transactional
     public ApiResponse<Void> deleteArticle(String articleId) {
         var article = articleRepository.findByIdAndUser(articleId, getUserEntity())
-                .orElseThrow(() -> new CustomRunTimeException(ErrorCode.ARTICLE_NOT_FOUND));
+                .orElseThrow(() -> new CustomRunTimeException(ErrorCode.ARTICLE_NOT_OWNED_BY_USER));
         articleRepository.delete(article);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())

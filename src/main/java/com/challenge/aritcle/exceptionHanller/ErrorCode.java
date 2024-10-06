@@ -19,6 +19,10 @@ public enum ErrorCode {
     SELF_FOLLOW_NOT_ALLOWED(400, "You cannot follow yourself.", HttpStatus.BAD_REQUEST),
     FAVORITE_ARTICLE_EXISTED(400, "You are already favorite this Article.",HttpStatus.BAD_REQUEST),
     FAVORITE_ARTICLE_NOT_EXIST(400, "You have never favorite this Article.",HttpStatus.BAD_REQUEST),
+    COMMENT_NOT_OWNED_BY_USER(400, "You are not the owner of this comment.", HttpStatus.BAD_REQUEST),
+    ARTICLE_NOT_OWNED_BY_USER(400, "You are not the owner of this article.", HttpStatus.BAD_REQUEST),
+
+
 
     ;
 

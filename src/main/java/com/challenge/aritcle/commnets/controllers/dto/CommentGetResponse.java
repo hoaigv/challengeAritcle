@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,9 +18,7 @@ public class CommentGetResponse {
 
     String article_id;
 
-    String content ;
+    String content;
 
     LocalDateTime createdAt;
-
-    Boolean status;
 }
