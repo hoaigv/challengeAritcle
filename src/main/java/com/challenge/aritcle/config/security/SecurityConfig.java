@@ -22,6 +22,7 @@ public class SecurityConfig {
     CustomJwtDecoder jwtDecoder;
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     String[] PUBLIC_POST_ENDPOINT = {"auth/register", "/auth/login"};
+    String[] PUBLIC_GET_ENDPOINT = {"/articles/**","/articles/{articleId}/comments"};
 
     public SecurityConfig(CustomJwtDecoder jwtDecoder, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.jwtDecoder = jwtDecoder;
@@ -34,6 +35,8 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request
                         .requestMatchers(HttpMethod.POST,PUBLIC_POST_ENDPOINT)
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET,PUBLIC_GET_ENDPOINT)
                         .permitAll()
                         .anyRequest()
                         .authenticated()

@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentCreateRequest {
-    @NotBlank
+    @NotBlank(message = "comment must be not null or only space !")
     String content;
 }

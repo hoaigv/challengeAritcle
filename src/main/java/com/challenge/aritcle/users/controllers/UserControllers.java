@@ -1,6 +1,9 @@
 package com.challenge.aritcle.users.controllers;
 
 import com.challenge.aritcle.aricles.controllers.dto.ArticleGetResponse;
+import com.challenge.aritcle.aricles.services.IArticleService;
+import com.challenge.aritcle.aricles.services.impl.ArticleService;
+import com.challenge.aritcle.commnets.services.ICommentService;
 import com.challenge.aritcle.common.api.ApiResponse;
 import com.challenge.aritcle.users.controllers.dto.UserFollowerRequest;
 import com.challenge.aritcle.users.controllers.dto.UserGetResponse;
@@ -34,9 +37,12 @@ public class UserControllers {
     IUserService userService;
     IFollowService followService;
     IFavoriteService favoriteService;
+    IArticleService articleService;
+    ICommentService commentService;
     private final static String DEFAULT_FILTER_SIZE = "10";
     private final static String DEFAULT_FILTER_PAGE = "0";
     private final static Sort DEFAULT_FILTER_SORT = Sort.by(Sort.Direction.DESC, "createdAt");
+
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserGetResponse>> getMyInformation() {
@@ -101,16 +107,18 @@ public class UserControllers {
         var resp = favoriteService.favoriteArticle(articleId);
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
+
     @DeleteMapping("/favorite/{articleId}")
     public ResponseEntity<ApiResponse<Void>> unfavoriteArticle(@PathVariable String articleId) {
         var resp = favoriteService.unFavoriteArticle(articleId);
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
+
     @GetMapping("/favorite")
     public ResponseEntity<ApiResponse<List<ArticleGetResponse>>> getFavorites(
             @RequestParam(required = false, defaultValue = DEFAULT_FILTER_PAGE) String page,
             @RequestParam(required = false, defaultValue = DEFAULT_FILTER_SIZE) String size
-    ){
+    ) {
         if (!isNumeric(page) || !isNumeric(size)) {
             var resp = ApiResponse.<List<ArticleGetResponse>>builder()
                     .result(null)
@@ -119,9 +127,33 @@ public class UserControllers {
                     .build();
             return ResponseEntity.badRequest().body(resp);
         }
-        Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size),DEFAULT_FILTER_SORT);
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), DEFAULT_FILTER_SORT);
         var resp = favoriteService.getFavoriteArticles(pageable);
         return ResponseEntity.status(HttpStatus.OK.value()).body(resp);
     }
+
+    @GetMapping("/articles")
+    public ResponseEntity<ApiResponse<List<ArticleGetResponse>>> getAllArticles(
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_PAGE) String page,
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_SIZE) String size
+    ) {
+        if (!isNumeric(page) || !isNumeric(size)) {
+            var resp = ApiResponse.<List<ArticleGetResponse>>builder()
+                    .result(null)
+                    .message("Page and size must be numeric")
+                    .code(400)
+                    .build();
+            return ResponseEntity.badRequest().body(resp);
+        }
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), DEFAULT_FILTER_SORT);
+        var resp = articleService.getAllArticlesByUser(pageable);
+        return ResponseEntity.status(HttpStatus.OK.value()).body(resp);
+    }
+    @DeleteMapping("articles/{articleId}/comments/{commentId}")
+    public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable("articleId") String articleId, @PathVariable("commentId") String commentId) {
+        var resp = commentService.deleteComment(commentId, articleId);
+        return ResponseEntity.status(HttpStatus.OK.value()).body(resp);
+    }
+
 
 }
