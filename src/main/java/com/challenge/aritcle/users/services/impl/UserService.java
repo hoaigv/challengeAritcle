@@ -1,5 +1,8 @@
 package com.challenge.aritcle.users.services.impl;
 
+import com.challenge.aritcle.aricles.controllers.dto.ArticleGetResponse;
+import com.challenge.aritcle.aricles.mappers.IArticleMapper;
+import com.challenge.aritcle.aricles.repositories.ArticleRepository;
 import com.challenge.aritcle.common.api.ApiResponse;
 import com.challenge.aritcle.exceptionHanller.CustomRunTimeException;
 import com.challenge.aritcle.exceptionHanller.ErrorCode;
@@ -16,9 +19,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements IUserService {
     UserRepository userRepository;
     IUserMapper userMapper;
+
+
 
     @Override
     public ApiResponse<Void> registerUser(UserCreateRequest userCreateRequest) {

@@ -4,6 +4,7 @@ import com.challenge.aritcle.commnets.controllers.dto.CommentCreateRequest;
 import com.challenge.aritcle.commnets.controllers.dto.CommentGetResponse;
 import com.challenge.aritcle.commnets.services.ICommentService;
 import com.challenge.aritcle.common.api.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,7 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 @RestController
-@RequestMapping("/{articleId}/comments")
+@RequestMapping("articles/{articleId}/comments")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
@@ -32,7 +33,7 @@ public class CommentController {
     private final static Sort DEFAULT_FILTER_SORT = Sort.by(Sort.Direction.DESC, "createdAt");
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> addComment(@PathVariable("articleId") String articleId, CommentCreateRequest commentCreateRequest) {
+    public ResponseEntity<ApiResponse<Void>> addComment(@PathVariable("articleId") String articleId,@RequestBody @Valid CommentCreateRequest commentCreateRequest) {
         var resp = commentService.addComment(commentCreateRequest, articleId);
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(resp);
     }
@@ -54,9 +55,5 @@ public class CommentController {
         var resp = commentService.readAllComment(pageable, articleId);
         return ResponseEntity.status(HttpStatus.OK.value()).body(resp);
     }
-    @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable("articleId") String articleId, @PathVariable("commentId") String commentId) {
-        var resp = commentService.deleteComment(commentId, articleId);
-        return ResponseEntity.status(HttpStatus.OK.value()).body(resp);
-    }
+
 }

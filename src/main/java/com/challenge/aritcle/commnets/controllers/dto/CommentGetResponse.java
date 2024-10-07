@@ -1,6 +1,5 @@
 package com.challenge.aritcle.commnets.controllers.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,7 +15,7 @@ public class CommentGetResponse {
 
     String username;
 
-    String article_id;
+    String articleId;
 
     String content;
 
