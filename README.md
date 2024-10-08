@@ -18,7 +18,7 @@ Một trong những thử thách lớn nhất trong dự án là xây dựng h�
 ## Yêu cầu hệ thống
 
 1. **JDK 21**: Cần cài đặt JDK 21 để phát triển và chạy ứng dụng.
-2. **Maven(3.9.8)**: Sử dụng Maven để quản lý dự án và phụ thuộc().
+2. **Maven(3.9.8)**: Sử dụng Maven để quản lý dự án và phụ thuộc.
 3. **Docker**: Sử dụng Docker để chạy container MySQL.
 4. **DBeaver (tùy chọn)**: Công cụ quản lý cơ sở dữ liệu MySQL.
 
