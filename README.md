@@ -11,13 +11,13 @@ Dự án này minh họa cách xây dựng hệ thống quản lý bài viết c
 Để chạy dự án này cục bộ, bạn cần cài đặt các công cụ sau:
 
 - [JDK 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
-- [Maven (v.3.9.8)](https://maven.apache.org/)
+- [Maven (v.3.9.8)](https://maven.apache.org/download.cgi)
 
 ### Các bước cài đặt
 
-1. **Clone repository**:
-2. **Chuyển vào thư mục dự án**:
-3. **Thiết lập các biến môi trường**:
+1. **Clone repository**
+2. **Chuyển vào thư mục dự án**
+3. **Thiết lập các biến môi trường**
 4. **Build dự án**:
     ```bash
     mvn clean install
