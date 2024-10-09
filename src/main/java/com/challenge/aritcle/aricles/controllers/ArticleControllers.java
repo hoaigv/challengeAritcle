@@ -5,6 +5,7 @@ import com.challenge.aritcle.aricles.controllers.dto.ArticleGetResponse;
 import com.challenge.aritcle.aricles.controllers.dto.ArticleUpdateRequest;
 import com.challenge.aritcle.aricles.services.impl.ArticleService;
 import com.challenge.aritcle.common.api.ApiResponse;
+import com.challenge.aritcle.utils.validators.PositiveNumber;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 @RestController
 @RequestMapping("/articles")
@@ -43,19 +42,13 @@ public class ArticleControllers {
         var resp = articleService.getArticle(articleId);
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
+
     @GetMapping
     public ResponseEntity<ApiResponse<List<ArticleGetResponse>>> getAllArticles(
-            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_PAGE) String page,
-            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_SIZE) String size
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_PAGE) @PositiveNumber String page,
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_SIZE) @PositiveNumber String size
     ) {
-        if (!isNumeric(page) || !isNumeric(size)) {
-            var resp = ApiResponse.<List<ArticleGetResponse>>builder()
-                    .result(null)
-                    .message("Page and size must be numeric")
-                    .code(400)
-                    .build();
-            return ResponseEntity.badRequest().body(resp);
-        }
+
         Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), DEFAULT_FILTER_SORT);
         var resp = articleService.getAllArticles(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(resp);

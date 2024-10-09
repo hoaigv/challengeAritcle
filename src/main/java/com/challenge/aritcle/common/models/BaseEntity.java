@@ -26,4 +26,6 @@ public class BaseEntity {
     @CreatedDate
     @NotNull(message = "created at must not be null")
     LocalDateTime createdAt;
+
+
 }

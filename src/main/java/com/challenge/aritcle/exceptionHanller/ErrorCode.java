@@ -21,8 +21,7 @@ public enum ErrorCode {
     FAVORITE_ARTICLE_NOT_EXIST(400, "You have never favorite this Article.",HttpStatus.BAD_REQUEST),
     COMMENT_NOT_OWNED_BY_USER(400, "You are not the owner of this comment.", HttpStatus.BAD_REQUEST),
     ARTICLE_NOT_OWNED_BY_USER(400, "You are not the owner of this article.", HttpStatus.BAD_REQUEST),
-
-
+    PAGE_SIZE_POSITIVE(400, "The page size must be greater than 0", HttpStatus.BAD_REQUEST),
 
     ;
 

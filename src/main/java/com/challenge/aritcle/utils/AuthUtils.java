@@ -1,6 +1,5 @@
 package com.challenge.aritcle.utils;
 
-import com.challenge.aritcle.users.models.UserEntity;
 import com.challenge.aritcle.users.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
