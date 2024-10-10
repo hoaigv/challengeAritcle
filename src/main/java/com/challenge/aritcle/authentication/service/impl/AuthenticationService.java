@@ -8,6 +8,7 @@ import com.challenge.aritcle.exceptionHanller.ErrorCode;
 import com.challenge.aritcle.users.models.UserEntity;
 import com.challenge.aritcle.users.repository.UserRepository;
 import com.challenge.aritcle.utils.AuthUtils;
+import com.challenge.aritcle.utils.enumUtils.TypeToken;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -34,7 +35,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthenticationService  implements IAuthenticationService {
+public class AuthenticationService implements IAuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
     @NonFinal
@@ -61,22 +62,21 @@ public class AuthenticationService  implements IAuthenticationService {
         if (!user.getPassword().equals(authenticationRequest.getPassword())) {
             throw new CustomRunTimeException(ErrorCode.PASSWORD_INCORRECT);
         }
-        var accessToken = generateToken(user,"access_token");
-        var refreshToken = generateToken(user,"refresh_token");
+        var refreshToken = generateToken(user, TypeToken.refresh_token.name());
         user.setRefreshToken(passwordEncoder.encode(refreshToken));
         userRepository.save(user);
         return AuthenticationResponse.builder()
-                .accessToken(accessToken)
+                .accessToken(generateToken(user, TypeToken.access_token.name()))
                 .refreshToken(refreshToken)
                 .build();
     }
 
     @Override
     public ApiResponse<Void> logout() {
-     var user = userRepository.findByUsername(AuthUtils.getUserCurrent())
-             .orElseThrow(() -> new CustomRunTimeException(ErrorCode.USER_NOT_FOUND));
-     user.setRefreshToken(null);
-     userRepository.save(user);
+        var user = userRepository.findByUsername(AuthUtils.getUserCurrent())
+                .orElseThrow(() -> new CustomRunTimeException(ErrorCode.USER_NOT_FOUND));
+        user.setRefreshToken(null);
+        userRepository.save(user);
         return ApiResponse.<Void>builder()
                 .message("Successfully logged out")
                 .build();
@@ -88,7 +88,7 @@ public class AuthenticationService  implements IAuthenticationService {
         var token = introspectRequest.getAccessToken();
         boolean isValid = true;
         try {
-            verifyToken(token ,false);
+            verifyToken(token, false);
         } catch (CustomRunTimeException e) {
             isValid = false;
         }
@@ -96,16 +96,16 @@ public class AuthenticationService  implements IAuthenticationService {
                 .valid(isValid)
                 .build();
     }
-    private SignedJWT verifyToken(String token , boolean isRefresh) {
-        JWSVerifier verifier ;
+
+    private SignedJWT verifyToken(String token, boolean isRefresh) {
+        JWSVerifier verifier;
 
         try {
-           if(isRefresh){
-               verifier = new MACVerifier(SIGNER_KEY_REFRESH_KEY);
-           }
-           else {
-               verifier = new MACVerifier(SIGNER_KEY_ACCESS_KEY);
-           }
+            if (isRefresh) {
+                verifier = new MACVerifier(SIGNER_KEY_REFRESH_KEY);
+            } else {
+                verifier = new MACVerifier(SIGNER_KEY_ACCESS_KEY);
+            }
             SignedJWT signedJWT = SignedJWT.parse(token);
             Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
             var verified = signedJWT.verify(verifier);
@@ -128,12 +128,11 @@ public class AuthenticationService  implements IAuthenticationService {
             if (!authenticated) {
                 throw new CustomRunTimeException(ErrorCode.REFRESH_TOKEN_FAILED);
             }
-            var accessToken = generateToken(user,"access_token");
-            var refreshToken = generateToken(user,"refresh_token");
+            var refreshToken = generateToken(user, TypeToken.refresh_token.name());
             user.setRefreshToken(passwordEncoder.encode(refreshToken));
             userRepository.save(user);
             return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
+                    .accessToken(generateToken(user, TypeToken.access_token.name()))
                     .refreshToken(refreshToken)
                     .build();
         } catch (ParseException e) {
@@ -141,14 +140,14 @@ public class AuthenticationService  implements IAuthenticationService {
         }
     }
 
-    private String generateToken(UserEntity user,String typeToken) {
+    private String generateToken(UserEntity user, String typeToken) {
         String time = VALID_DURATION;
         String key = SIGNER_KEY_ACCESS_KEY;
-        if(!typeToken.equals("access_token")) {
+        if (!typeToken.equals(TypeToken.access_token.name())) {
             time = REFRESHABLE_DURATION;
             key = SIGNER_KEY_REFRESH_KEY;
         }
-        JWSHeader header =new JWSHeader(JWSAlgorithm.HS512);
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
                 .issueTime(new Date())
@@ -168,7 +167,7 @@ public class AuthenticationService  implements IAuthenticationService {
 
     private String buildScope(String typeToken) {
         StringJoiner scopeJoiner = new StringJoiner(" ");
-            scopeJoiner.add(typeToken);
+        scopeJoiner.add(typeToken);
         return scopeJoiner.toString();
     }
 }
